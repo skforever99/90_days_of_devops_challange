@@ -1,0 +1,99 @@
+installing jenkins in ubuntu:
+
+1. install java first
+2. curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io.key | sudo tee /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+3. echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] https://pkg.jenkins.io/debian-stable binary/ | sudo tee /etc/apt/sources.list.d/jenkins.list > /dev/null
+4. sudo apt update
+5. sudo apt install jenkins -y
+6. sudo systemctl status jenkins   
+
+jenkins is now installed if it is not running then :
+sudo systemctl enable --now jenkins
+
+###################setting up jenkins on vm ###########
+
+1. sudo ufw allow 8080
+2. sudo ufw status
+3. sudo ufw enable
+ ########link for refrence: https://phoenixnap.com/kb/install-jenkins-ubuntu
+
+#######setting up jenkins :
+1. http://ip_address_or_domain:8080           -----------eg: http://34.125.54.136:8080/
+2. sudo cat /var/lib/jenkins/secrets/initialAdminPassword
+   ------------copy password and paste in jenkins------
+
+-----creating docker file and pushing to to docker : https://www.youtube.com/watch?v=0eMU23VyzR8
+
+docker file :
+1. login : docker login -u your_user_name
+2. to build docker image : go to docker file directory and then docker build -t skforever99/python-app:0.0.1.RELEASE .
+3.  run a container to test : docker container run -d -p 3000:3000 skforever99/python-app:0.0.1.RELEASE
+4. once it is tested to push code to dockerhub : docker push skforever99/python-app:0.0.1.RELEASE
+
+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
+https://github.com/skforever99/demo-repo
+
+echo <password> | sudo -S <cmd>
+sudo docker pull skforever99/python-app:0.0.1.RELEASE
+sudo docker run -d -p 80:80 skforever99/python-app:0.0.1.RELEASE
+
+chmod +x make_prediction.sh
+./make_prediction.sh
+
+docker login -u skforever99
+dckr_pat_RGkWvhdW0sDxIjlG2ObkvymUmco
+dckr_pat_YY_wITWUs6dmfwH2KvRLo-suFIs
+
+
+############installing docker into ubuntu 
+link - https://devopscube.com/how-to-install-and-configure-docker/
+
+1. sudo apt-get update -y
+2. curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+3. sudo add-apt-repository \
+   "deb [arch=amd64] https://download.docker.com/linux/ubuntu \
+   $(lsb_release -cs) \
+   stable"
+4. sudo apt-get update -y
+5. sudo apt-get install docker-ce docker-ce-cli containerd.io -y
+6. sudo docker version
+7. sudo chmod 666 /var/run/docker.sock
+
+jenkins file for docker image build :
+pipeline {
+  agent any
+  environment {
+    DOCKERHUB_CREDENTIALS = credentials('dockerhub')
+  }
+  stages {
+    stage('Build') {
+      steps {
+        sh 'docker build -t skforever99/python-app:latest .'
+      }
+    }
+    stage('Login') {
+      steps {
+        sh 'echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin'
+      }
+    }
+    stage('Push') {
+      steps {
+        sh 'docker push skforever99/python-app:latest'
+      }
+    }
+     stage ('pull'){
+      steps { 
+            sh 'sudo docker pull skforever99/python-app:latest '
+           } 
+    }
+    stage ('deploy'){
+      steps {  sh 'sudo docker run -d -p 80:80 skforever99/python-app:latest' }
+    }
+  }
+  post {
+    always {
+      sh 'docker logout'
+    }
+   
+  }
+}
