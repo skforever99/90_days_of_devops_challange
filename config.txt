@@ -29,6 +29,7 @@ sudo apt-get install jenkins -y
 2. sudo ufw status
 3. sudo ufw enable
  ########link for refrence: https://phoenixnap.com/kb/install-jenkins-ubuntu
+https://www.rosehosting.com/blog/how-to-install-jenkins-on-ubuntu-22-04/
 
 #######setting up jenkins :
 1. http://ip_address_or_domain:8080           -----------eg: http://34.125.54.136:8080/
