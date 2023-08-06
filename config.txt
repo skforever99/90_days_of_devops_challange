@@ -10,6 +10,19 @@ installing jenkins in ubuntu:
 jenkins is now installed if it is not running then :
 sudo systemctl enable --now jenkins
 
+#####jenkins on ubuntu
+
+curl -fsSL https://pkg.jenkins.io/debian-stable/jenkins.io-2023.key | 
+sudo tee \ /usr/share/keyrings/jenkins-keyring.asc > /dev/null
+
+echo deb [signed-by=/usr/share/keyrings/jenkins-keyring.asc] \
+https://pkg.jenkins.io/debian-stable binary/ | sudo tee \
+/etc/apt/sources.list.d/jenkins.list > /dev/null
+
+sudo apt-get update
+
+sudo apt-get install jenkins -y
+
 ###################setting up jenkins on vm ###########
 
 1. sudo ufw allow 8080
